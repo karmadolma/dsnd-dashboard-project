@@ -1,10 +1,14 @@
 # Import any dependencies needed to execute sql queries
-# YOUR CODE HERE
+import pandas as pd
+from pathlib import Path
+from sqlite3 import connect
+from functools import wraps
+
 
 # Define a class called QueryBase
 # Use inheritance to add methods
 # for querying the employee_events database.
-# YOUR CODE HERE
+class QueryBase():
 
     # Create a class attribute called `name`
     # set the attribute to an empty string
