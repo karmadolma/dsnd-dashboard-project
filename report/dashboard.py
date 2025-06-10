@@ -47,11 +47,12 @@ class ReportDropdown(Dropdown):
     # Ensure the method uses the same parameters
     # as the parent class method
     def component_data(self, entity_id, model):
-        # Using the model argument
+    	# Using the model argument
         # call the employee_events method
         # that returns the user-type's
         # names and ids
-		return model.username()
+    	return model.username()
+
 
 # Create a subclass of base_components/BaseComponent
 # called `Header`
@@ -86,7 +87,7 @@ class LineChart(MatplotlibViz):
         
         # User the pandas .set_index method to set
         # the date column as the index
-        x = x.set_index("event_date"")
+        x = x.set_index("event_date")
         
         # Sort the index
        	x = x.sort_index()
@@ -190,8 +191,11 @@ class Visualizations(CombinedComponent):
     # instance of `LineChart` and `BarChart`
     #### YOUR CODE HERE
 	children = [LineChart(), BarChart()]
-    # Leave this line unchanged
-    outer_div_type = Div(cls='grid')
+	
+	# Leave this line unchanged
+	outer_div_type = Div(cls='grid')
+
+    
             
 # Create a subclass of base_components/DataTable
 # called `NotesTable`
@@ -247,12 +251,12 @@ Report()
 # Set the route's path to the root
 @app.route('/', methods=['GET'])
 
-    # Call the initialized report
-    # pass the integer 1 and an instance
-    # of the Employee class as arguments
-    # Return the result
-    def root():
-    	return Report().render(1, Employee())
+# Call the initialized report
+# pass the integer 1 and an instance
+# of the Employee class as arguments
+# Return the result
+def root():
+	return Report().render(1, Employee())
 
 # Create a route for a get request
 # Set the route's path to receive a request
@@ -263,13 +267,13 @@ Report()
 # to a string datatype
 @app.route('/employee/<string:id>', methods=['GET'])
 
-    # Call the initialized report
-    # pass the ID and an instance
-    # of the Employee SQL class as arguments
-    # Return the result
-    def employee(id):
-    # Call Report with id and Employee instance
-    	return Report().render(id, Employee())
+# Call the initialized report
+# pass the ID and an instance
+# of the Employee SQL class as arguments
+# Return the result
+def employee(id):
+# Call Report with id and Employee instance
+	return Report().render(id, Employee())
 
 
 # Create a route for a get request
@@ -282,13 +286,13 @@ Report()
 @app.route('/team/<string:id>', methods=['GET'])
 
 
-    # Call the initialized report
-    # pass the id and an instance
-    # of the Team SQL class as arguments
-    # Return the result
-    def team(id):
-    # Call Report with id and Team instance
-    	return Report().render(id, Team())
+# Call the initialized report
+# pass the id and an instance
+# of the Team SQL class as arguments
+# Return the result
+def team(id):
+# Call Report with id and Team instance
+	return Report().render(id, Team())
 
 
 # Keep the below code unchanged!

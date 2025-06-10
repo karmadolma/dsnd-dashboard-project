@@ -9,11 +9,10 @@ project_root = Path(__file__).resolve().parent
 # apply the pytest fixture decorator
 # to a `db_path` function
 @pytest.fixture
-    
+def db_path():
     # Using the `project_root` variable
     # return a pathlib object for the `employee_events.db` file
-   def db_path():
-   	return project_root / "employee_events.db"
+	return project_root/"python-package"/"employee_events"/"employee_events.db"
 
 # Define a function called
 # `test_db_exists`
@@ -26,7 +25,7 @@ def test_db_exists(db_path):
     # using the pathlib `.is_file` method
     # assert that the sqlite database file exists
     # at the location passed to the test_db_exists function
-        assert db_path.is_file()
+    assert db_path.is_file()
 
 
 @pytest.fixture
