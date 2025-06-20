@@ -1,5 +1,6 @@
 # Import any dependencies needed to execute sql queries
 import pandas as pd
+from .sql_execution import QueryMixin  
 
 
 # Define a class called QueryBase
@@ -13,7 +14,7 @@ class QueryBase(QueryMixin):
 
     # Define a `names` method that receives
     # no passed arguments
-    def names():
+    def names(self):
         self.names_list = []
         # Return an empty list
         return self.names_list
