@@ -1,5 +1,5 @@
 # Import the QueryBase class
-from QueryBase import QueryBase
+from .query_base import QueryBase
 
 # Import dependencies needed for sql execution
 # from the `sql_execution` module
@@ -10,7 +10,7 @@ import pandas as pd
 
 # Create a subclass of QueryBase
 # called  `Team`
-class Team:
+class Team(QueryBase):
 
     # Set the class attribute `name`
     # to the string "team"
@@ -21,7 +21,7 @@ class Team:
     # that receives no arguments
     # This method should return
     # a list of tuples from an sql execution
-    def names():
+    def names(self):
         
         # Query 5
         # Write an SQL query that selects
