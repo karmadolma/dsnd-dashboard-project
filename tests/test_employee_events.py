@@ -4,15 +4,15 @@ from pathlib import Path
 # Using pathlib create a project_root
 # variable set to the absolute path
 # for the root of this project
-project_root = Path(__file__).resolve().parent
+project_root = Path(__file__).resolve().parent.parent
 
 # apply the pytest fixture decorator
 # to a `db_path` function
 @pytest.fixture
 def db_path():
-    # Using the `project_root` variable
+	# Using the `project_root` variable
     # return a pathlib object for the `employee_events.db` file
-	return project_root/"python-package"/"employee_events"/"employee_events.db"
+    return project_root/"python-package"/"employee_events"/"employee_events.db"
 
 # Define a function called
 # `test_db_exists`
@@ -42,7 +42,7 @@ def table_names(db_conn):
 # `test_employee_table_exists`
 # This function should receive the `table_names`
 # fixture as an argument
-def test_employee_table_exists():
+def test_employee_table_exists(table_names):
 
     # Assert that the string 'employee'
     # is in the table_names list
