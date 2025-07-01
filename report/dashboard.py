@@ -4,9 +4,7 @@ from fasthtml import FastHTML
 
 
 # Import QueryBase, Employee, Team from employee_events
-from employee_events import QueryBase
-from employee_events import Employee
-from employee_events import Team
+from employee_events import QueryBase, Employee, Team
 
 # import the load_model function from the utils.py file
 from utils import load_model
@@ -36,11 +34,11 @@ class ReportDropdown(Dropdown):
     def build_component(self, entity_id, model):
         #  Set the `label` attribute so it is set
         #  to the `name` attribute for the model
-        label = name
+        self.label = model.name
         
         # Return the output from the
         # parent class's build_component method
-        return super().build_component(label)
+        return super().build_component(entity_id, model)
 
     
     # Overwrite the `component_data` method
@@ -51,7 +49,7 @@ class ReportDropdown(Dropdown):
         # call the employee_events method
         # that returns the user-type's
         # names and ids
-    	return model.username()
+        return model.names()
 
 
 # Create a subclass of base_components/BaseComponent
@@ -75,35 +73,31 @@ class LineChart(MatplotlibViz):
     
     # Overwrite the parent class's `visualization`
     # method. Use the same parameters as the parent
-    def visualization(self, asset_id, model):
-    
-        # Pass the `asset_id` argument to
+    def visualization(self, entity_id, model):
+    	
+    	# Pass the `asset_id` argument to
         # the model's `event_counts` method to
         # receive the x (Day) and y (event count)
-        x, y = asset_id.event_counts(asset_id)
+        df = model.event_counts(entity_id)
 
         # Use the pandas .fillna method to fill nulls with 0
-        y = y.fillna(0)
+        df = df.fillna(0)
         
         # User the pandas .set_index method to set
         # the date column as the index
-        x = x.set_index("event_date")
+        df = df.set_index("event_date")
         
         # Sort the index
-       	x = x.sort_index()
+       	df = df.sort_index()
+       	
+       	# Use the .cumsum method to change the data
+        # in the dataframe to cumulative counts
+        df = df.cumsum()
        	
        	# Set the dataframe columns to the list
         # ['Positive', 'Negative']
-        df = x.copy()
-        df['Positive'] = y['positive_events']
-        df['Negative'] = y['negative_events']
-        
-        # Use the .cumsum method to change the data
-        # in the dataframe to cumulative counts
-        df['Positive'] = df['Positive'].cumsum()
-        df['Negative'] = df['Negative'].cumsum()
-        
-        
+        df.columns = ["Positive", "Negative"]     
+
         # Initialize a pandas subplot
         # and assign the figure and axis
         # to variables
@@ -111,7 +105,7 @@ class LineChart(MatplotlibViz):
         
         # call the .plot method for the
         # cumulative counts dataframe
-        df[['Positive', 'Negative']].plot(ax=ax)
+        df.plot(ax=ax)
         
         # pass the axis variable
         # to the `.set_axis_styling`
@@ -149,7 +143,7 @@ class BarChart(MatplotlibViz):
         
         # Using the predictor class attribute
         # pass the data to the `predict_proba` method
-        predictions = predictor.predict_proba(data)
+        predictions = self.predictor.predict_proba(data)
     
         # Index the second column of predict_proba output
         # The shape should be (<number of records>, 1)
@@ -160,12 +154,12 @@ class BarChart(MatplotlibViz):
         #
         # If the model's name attribute is "team"
         # We want to visualize the mean of the predict_proba output
-        if model.attribute == "team":
+        if model.name == "team":
             pred = second_column.mean()
         # Otherwise set `pred` to the first value
         # of the predict_proba output
         else:
-            pred = second_column[0, 0]     	
+            pred = second_column[0]     	
             
         
         # Initialize a matplotlib subplot
@@ -231,32 +225,32 @@ class DashboardFilters(FormGroup):
     
 # Create a subclass of CombinedComponents
 # called `Report`
-class Report(CombinedComponents):
+class Report(CombinedComponent):
 
     # Set the `children`
     # class attribute to a list
     # containing initialized instances 
     # of the header, dashboard filters,
     # data visualizations, and notes table
-    children = [header(),DashboardFilters(), Visualizations(), NotesTable()]
+    children = [Header(),DashboardFilters(), Visualizations(), NotesTable()]
 
 # Initialize a fasthtml app 
 app = FastHTML()
 
 # Initialize the `Report` class
-Report()
+report = Report()
 
 
 # Create a route for a get request
 # Set the route's path to the root
-@app.route('/', methods=['GET'])
+@app.route('/')
 
 # Call the initialized report
 # pass the integer 1 and an instance
 # of the Employee class as arguments
 # Return the result
 def root():
-	return Report().render(1, Employee())
+	return report(1, Employee())
 
 # Create a route for a get request
 # Set the route's path to receive a request
@@ -265,15 +259,15 @@ def root():
 # an ID of `2`. 
 # parameterize the employee ID 
 # to a string datatype
-@app.route('/employee/<string:id>', methods=['GET'])
+@app.route('/employee/{entity_id}')
 
 # Call the initialized report
 # pass the ID and an instance
 # of the Employee SQL class as arguments
 # Return the result
-def employee(id):
+def employee(entity_id: str):
 # Call Report with id and Employee instance
-	return Report().render(id, Employee())
+	return report(entity_id, Employee())
 
 
 # Create a route for a get request
@@ -283,16 +277,16 @@ def employee(id):
 # an ID of `2`. 
 # parameterize the team ID 
 # to a string datatype
-@app.route('/team/<string:id>', methods=['GET'])
+@app.route('/team/{entity_id}')
 
 
 # Call the initialized report
 # pass the id and an instance
 # of the Team SQL class as arguments
 # Return the result
-def team(id):
+def team(entity_id:str):
 # Call Report with id and Team instance
-	return Report().render(id, Team())
+	return report(entity_id, Team())
 
 
 # Keep the below code unchanged!

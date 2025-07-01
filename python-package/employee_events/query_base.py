@@ -37,7 +37,7 @@ class QueryBase(QueryMixin):
 			SELECT event_date, 
 				   SUM(positive_events) AS positive_events, 
 				   SUM(negative_events) AS negative_events
-			FROM {self.name}
+			FROM employee_events
 			WHERE {self.name}_id = '{id}'
 			GROUP BY event_date
 			ORDER BY event_date;
